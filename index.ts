@@ -73,7 +73,22 @@ async function run() {
             }
         });
 
-       
+        // get all products
+        app.get("/products", async (req: Request, res: Response) => {
+            try {
+                const products = await productsCollection.find().toArray();
+
+                res.send(products);
+            } catch (error) {
+                console.error(error);
+
+                res.status(500).send({
+                    success: false,
+                    message: "Failed to fetch products",
+                });
+            }
+        });
+
 
 
 
