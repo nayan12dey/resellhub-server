@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId  } = require('mongodb');
 const uri = process.env.MONGODB_URI;
 
 if (!uri) {
@@ -85,6 +85,33 @@ async function run() {
                 res.status(500).send({
                     success: false,
                     message: "Failed to fetch products",
+                });
+            }
+        });
+
+        // get product details by id
+        app.get("/products/:id", async (req: Request, res: Response) => {
+            try {
+                const id = req.params.id;
+
+                const product = await productsCollection.findOne({
+                    _id: new ObjectId(id),
+                });
+
+                if (!product) {
+                    return res.status(404).send({
+                        success: false,
+                        message: "Product not found",
+                    });
+                }
+
+                res.send(product);
+            } catch (error) {
+                console.error(error);
+
+                res.status(500).send({
+                    success: false,
+                    message: "Failed to fetch product",
                 });
             }
         });
