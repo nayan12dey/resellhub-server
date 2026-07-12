@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const { MongoClient, ServerApiVersion, ObjectId  } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = process.env.MONGODB_URI;
 
 if (!uri) {
@@ -76,7 +76,10 @@ async function run() {
         // get all products
         app.get("/products", async (req: Request, res: Response) => {
             try {
-                const products = await productsCollection.find().toArray();
+                const limit = Number(req.query.limit) || 0;
+
+
+                const products = await productsCollection.find().sort({ createdAt: -1 }).limit(limit).toArray();
 
                 res.send(products);
             } catch (error) {
