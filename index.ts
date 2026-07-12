@@ -119,6 +119,35 @@ async function run() {
             }
         });
 
+        // get statistics data
+        app.get("/statistics/chart", async (req: Request, res: Response) => {
+            try {
+                const chartData = await productsCollection.aggregate([
+                    {
+                        $group: {
+                            _id: "$category",
+                            value: { $sum: 1 }
+                        }
+                    },
+                    {
+                        $project: {
+                            _id: 0,
+                            name: "$_id",
+                            value: 1
+                        }
+                    }
+                ]).toArray();
+
+                res.send(chartData);
+            } catch (error) {
+                console.error(error);
+
+                res.status(500).send({
+                    success: false,
+                    message: "Failed to fetch chart data"
+                });
+            }
+        });
 
 
 
