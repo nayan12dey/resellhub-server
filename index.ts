@@ -55,12 +55,29 @@ async function run() {
             try {
                 const product = req.body;
 
-                const result = await productsCollection.insertOne(product);
+                const newProduct = {
+                    ...product,
+                    createdAt: new Date(),
+                };
+
+                if (
+                    !product.title ||
+                    !product.description ||
+                    !product.price ||
+                    !product.category
+                ) {
+                    return res.status(400).send({
+                        success: false,
+                        message: "Missing required fields",
+                    });
+                }
+
+                const result = await productsCollection.insertOne(newProduct);
 
                 res.status(201).send({
                     success: true,
-                    message: "Product added successfully",
                     insertedId: result.insertedId,
+                    message: "Product added successfully",
                 });
 
             } catch (error) {
@@ -76,19 +93,30 @@ async function run() {
         // get all products
         app.get("/products", async (req: Request, res: Response) => {
             try {
+
                 const limit = Number(req.query.limit) || 0;
 
+                const cursor = productsCollection
+                    .find({})
+                    .sort({ createdAt: -1 });
 
-                const products = await productsCollection.find().sort({ createdAt: -1 }).limit(limit).toArray();
+                if (limit > 0) {
+                    cursor.limit(limit);
+                }
+
+                const products = await cursor.toArray();
 
                 res.send(products);
+
             } catch (error) {
+
                 console.error(error);
 
                 res.status(500).send({
                     success: false,
                     message: "Failed to fetch products",
                 });
+
             }
         });
 
