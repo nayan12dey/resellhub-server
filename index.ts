@@ -96,9 +96,56 @@ async function run() {
 
                 const limit = Number(req.query.limit) || 0;
 
+
+
+                const search = req.query.search?.toString() || "";
+                const category = req.query.category?.toString() || "";
+                const condition = req.query.condition?.toString() || "";
+                const sort = req.query.sort?.toString() || "newest";
+
+                const filter: any = {};
+
+                if (search) {
+                    filter.title = {
+                        $regex: search,
+                        $options: "i",
+                    };
+                }
+
+                if (category) {
+                    filter.category = category;
+                }
+
+                if (condition) {
+                    filter.condition = condition;
+                }
+
+                let sortOption: any = {
+                    createdAt: -1,
+                };
+
+                switch (sort) {
+
+                    case "oldest":
+                        sortOption = { createdAt: 1 };
+                        break;
+
+                    case "lowToHigh":
+                        sortOption = { price: 1 };
+                        break;
+
+                    case "highToLow":
+                        sortOption = { price: -1 };
+                        break;
+
+                    default:
+                        sortOption = { createdAt: -1 };
+                }
+
                 const cursor = productsCollection
-                    .find({})
-                    .sort({ createdAt: -1 });
+                    .find(filter)
+                    .sort(sortOption);
+
 
                 if (limit > 0) {
                     cursor.limit(limit);
