@@ -178,6 +178,69 @@ async function run() {
         });
 
 
+        // get logged in user's products
+        app.get("/products/user/:email", async (req: Request, res: Response) => {
+            try {
+                const email = req.params.email;
+
+                const products = await productsCollection
+                    .find({
+                        "seller.email": email,
+                    })
+                    .sort({ createdAt: -1 })
+                    .toArray();
+
+                res.send(products);
+
+            } catch (error) {
+                console.error(error);
+
+                res.status(500).send({
+                    success: false,
+                    message: "Failed to fetch user products",
+                });
+            }
+        });
+
+        // delete product
+        app.delete("/products/:id", async (req: Request, res: Response) => {
+
+            try {
+
+                const id = req.params.id;
+
+                const result = await productsCollection.deleteOne({
+                    _id: new ObjectId(id),
+                });
+
+                if (result.deletedCount === 0) {
+
+                    return res.status(404).send({
+                        success: false,
+                        message: "Product not found",
+                    });
+
+                }
+
+                res.send({
+                    success: true,
+                    message: "Product deleted successfully",
+                });
+
+            } catch (error) {
+
+                console.error(error);
+
+                res.status(500).send({
+                    success: false,
+                    message: "Failed to delete product",
+                });
+
+            }
+
+        });
+
+
 
 
 
