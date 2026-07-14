@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { jwtVerify, createRemoteJWKSet } from "jose";
+// import { jwtVerify, createRemoteJWKSet } from "jose";
 
 export interface AuthenticatedRequest extends Request {
     user?: any;
@@ -12,13 +12,41 @@ export interface AuthenticatedRequest extends Request {
 //     new URL(`${process.env.BETTER_AUTH_URL}/api/auth/jwks`)
 // );
 
-let JWKS: ReturnType<typeof createRemoteJWKSet> | null = null;
+// let JWKS: ReturnType<typeof createRemoteJWKSet> | null = null;
 
-function getJWKS() {
+// function getJWKS() {
 
-    if (JWKS) {
-        return JWKS;
+//     if (JWKS) {
+//         return JWKS;
+//     }
+
+//     const authUrl = process.env.BETTER_AUTH_URL;
+
+//     if (!authUrl) {
+//         throw new Error("BETTER_AUTH_URL is missing");
+//     }
+
+//     JWKS = createRemoteJWKSet(
+//         new URL(`${authUrl}/api/auth/jwks`)
+//     );
+
+//     return JWKS;
+// }
+
+
+let jose: typeof import("jose") | null = null;
+
+const getJose = async () => {
+    if (!jose) {
+        jose = await import("jose");
     }
+    return jose;
+};
+
+let JWKS: any = null;
+
+const getJWKS = async () => {
+    if (JWKS) return JWKS;
 
     const authUrl = process.env.BETTER_AUTH_URL;
 
@@ -26,12 +54,14 @@ function getJWKS() {
         throw new Error("BETTER_AUTH_URL is missing");
     }
 
+    const { createRemoteJWKSet } = await getJose();
+
     JWKS = createRemoteJWKSet(
         new URL(`${authUrl}/api/auth/jwks`)
     );
 
     return JWKS;
-}
+};
 
 
 
@@ -57,9 +87,16 @@ export const verifyToken = async (
 
         // const { payload } = await jwtVerify(token, JWKS);
 
+        // const { payload } = await jwtVerify(
+        //     token,
+        //     getJWKS()
+        // );
+
+        const { jwtVerify } = await getJose();
+
         const { payload } = await jwtVerify(
             token,
-            getJWKS()
+            await getJWKS()
         );
 
         req.user = payload;
