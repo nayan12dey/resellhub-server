@@ -1,3 +1,4 @@
+import { verifyToken } from "./verifyToken";
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -226,7 +227,7 @@ async function run() {
 
 
         // get logged in user's products
-        app.get("/products/user/:email", async (req: Request, res: Response) => {
+        app.get("/products/user/:email", verifyToken, async (req: Request, res: Response) => {
             try {
                 const email = req.params.email;
 
@@ -250,7 +251,7 @@ async function run() {
         });
 
         // delete product
-        app.delete("/products/:id", async (req: Request, res: Response) => {
+        app.delete("/products/:id",verifyToken, async (req: Request, res: Response) => {
 
             try {
 
@@ -286,9 +287,6 @@ async function run() {
             }
 
         });
-
-
-
 
 
 
