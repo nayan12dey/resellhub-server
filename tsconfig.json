@@ -1,38 +1,38 @@
-{
-  "compilerOptions": {
-    "target": "ES2020",
-    "module": "CommonJS",
-    "rootDir": ".",
-    "outDir": "./dist",
-   
-
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-
-    "types": ["node"]
-  },
-  "include": ["index.ts"],
-//   "include": [
-//   "*.ts",
-//   "**/*.ts"
-// ],
-  "exclude": ["node_modules", "dist"]
-}
-
-
 // {
 //   "compilerOptions": {
 //     "target": "ES2020",
-//     "module": "commonjs",
-//     "moduleResolution": "node",
-//     "outDir": "dist",
+//     "module": "CommonJS",
+//     "rootDir": ".",
+//     "outDir": "./dist",
+   
+
 //     "strict": true,
 //     "esModuleInterop": true,
-//     "skipLibCheck": true
-//   }
+//     "skipLibCheck": true,
+//     "forceConsistentCasingInFileNames": true,
+
+//     "moduleResolution": "node",
+//     "resolveJsonModule": true,
+
+//     "types": ["node"]
+//   },
+//   "include": ["index.ts"],
+// //   "include": [
+// //   "*.ts",
+// //   "**/*.ts"
+// // ],
+//   "exclude": ["node_modules", "dist"]
 // }
+
+
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  }
+}
