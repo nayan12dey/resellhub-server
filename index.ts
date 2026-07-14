@@ -52,7 +52,7 @@ async function run() {
 
 
         // insert products
-        app.post("/products", async (req: Request, res: Response) => {
+        app.post("/products",verifyToken, async (req: Request, res: Response) => {
             try {
                 const product = req.body;
 
