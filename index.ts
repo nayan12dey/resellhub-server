@@ -52,7 +52,7 @@ async function run() {
 
 
         // insert products
-        app.post("/products",verifyToken, async (req: Request, res: Response) => {
+        app.post("/products", verifyToken, async (req: Request, res: Response) => {
             try {
                 const product = req.body;
 
@@ -95,7 +95,10 @@ async function run() {
         app.get("/products", async (req: Request, res: Response) => {
             try {
 
-                const limit = Number(req.query.limit) || 0;
+                const page = Number(req.query.page) || 1;
+                const limit = Number(req.query.limit) || 8;
+
+                const skip = (page - 1) * limit;
 
 
 
@@ -121,6 +124,8 @@ async function run() {
                     filter.condition = condition;
                 }
 
+                const totalProducts = await productsCollection.countDocuments(filter);
+
                 let sortOption: any = {
                     createdAt: -1,
                 };
@@ -143,18 +148,32 @@ async function run() {
                         sortOption = { createdAt: -1 };
                 }
 
-                const cursor = productsCollection
+                // const cursor = productsCollection
+                //     .find(filter)
+                //     .sort(sortOption);
+
+
+                // if (limit > 0) {
+                //     cursor.limit(limit);
+                // }
+
+                // const products = await cursor.toArray();
+
+                const products = await productsCollection
                     .find(filter)
-                    .sort(sortOption);
+                    .sort(sortOption)
+                    .skip(skip)
+                    .limit(limit)
+                    .toArray();
 
+                // res.send(products);
 
-                if (limit > 0) {
-                    cursor.limit(limit);
-                }
-
-                const products = await cursor.toArray();
-
-                res.send(products);
+                res.send({
+                    products,
+                    currentPage: page,
+                    totalPages: Math.ceil(totalProducts / limit),
+                    totalProducts,
+                });
 
             } catch (error) {
 
@@ -251,7 +270,7 @@ async function run() {
         });
 
         // delete product
-        app.delete("/products/:id",verifyToken, async (req: Request, res: Response) => {
+        app.delete("/products/:id", verifyToken, async (req: Request, res: Response) => {
 
             try {
 
