@@ -72,7 +72,8 @@ export const verifyToken = async (
 ) => {
 
     const authHeader = req.headers.authorization;
-    console.log(authHeader, "authHeader")
+    // console.log(authHeader, "authHeader")
+    console.log("Authorization", authHeader)
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res.status(401).json({
@@ -83,6 +84,13 @@ export const verifyToken = async (
 
     const token = authHeader.split(" ")[1];
     console.log(token, "token")
+
+    console.log("BETTER_AUTH_URL:", process.env.BETTER_AUTH_URL);
+
+    console.log(
+        "JWKS URL:",
+        `${process.env.BETTER_AUTH_URL}/api/auth/jwks`
+    );
 
     try {
 
@@ -100,13 +108,25 @@ export const verifyToken = async (
             await getJWKS()
         );
 
+        console.log("JWT VERIFIED SUCCESSFULLY");
+        console.log(payload);
+
         req.user = payload;
 
         next();
 
     } catch (error) {
 
+        console.error("========== JWT VERIFY ERROR ==========");
+
         console.error(error);
+
+
+        if (error instanceof Error) {
+            console.error("Message:", error.message);
+            console.error("Name:", error.name);
+            console.error("Stack:", error.stack);
+        }
 
         return res.status(401).json({
             success: false,
