@@ -82,6 +82,7 @@ export const verifyToken = async (
     }
 
     const token = authHeader.split(" ")[1];
+    console.log(token, "token")
 
     try {
 
