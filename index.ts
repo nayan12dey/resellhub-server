@@ -54,6 +54,11 @@ async function run() {
         // insert products
         app.post("/products", verifyToken, async (req: Request, res: Response) => {
             try {
+
+                console.log("BODY:", req.body);
+
+                console.log("USER:", (req as any).user);
+
                 const product = req.body;
 
                 const newProduct = {
@@ -73,7 +78,11 @@ async function run() {
                     });
                 }
 
+                console.log("Before insertOne");
+
                 const result = await productsCollection.insertOne(newProduct);
+
+                console.log("Insert Result:", result)
 
                 res.status(201).send({
                     success: true,
@@ -82,7 +91,17 @@ async function run() {
                 });
 
             } catch (error) {
+
+                console.error("========== INSERT ERROR ==========");
+
                 console.error(error);
+
+
+                if (error instanceof Error) {
+                    console.error("Message:", error.message);
+                    console.error("Stack:", error.stack);
+                }
+                
 
                 res.status(500).send({
                     success: false,
