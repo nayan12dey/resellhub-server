@@ -52,7 +52,7 @@ async function run() {
 
 
         // insert products
-        app.post("/products", verifyToken, async (req: Request, res: Response) => {
+        app.post("/products", async (req: Request, res: Response) => {
             try {
 
                 console.log("BODY:", req.body);
@@ -264,8 +264,8 @@ async function run() {
         });
 
 
-        // get logged in user's products
-        app.get("/products/user/:email", verifyToken, async (req: Request, res: Response) => {
+        // get logged in user's products(verifyToken)
+        app.get("/products/user/:email", async (req: Request, res: Response) => {
             try {
                 const email = req.params.email;
 
@@ -288,8 +288,8 @@ async function run() {
             }
         });
 
-        // delete product
-        app.delete("/products/:id", verifyToken, async (req: Request, res: Response) => {
+        // delete product(verifyToken)
+        app.delete("/products/:id", async (req: Request, res: Response) => {
 
             try {
 
